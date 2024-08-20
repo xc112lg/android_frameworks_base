@@ -1078,4 +1078,10 @@ interface IActivityManager {
     String getSpoofTrickyStoreKeyBox();
 
     String getSpoofTrickyStorePatch();
+
+    /**
+     *  Should disable touch if three fingers swipe enabled
+     */
+    boolean isThreeFingersSwipeActive();
+    void setThreeFingersSwipeActive(boolean active);
 }
