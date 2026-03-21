@@ -39,6 +39,7 @@ import com.android.internal.logging.MetricsLogger;
 import com.android.internal.logging.UiEventLogger;
 import com.android.internal.statusbar.IStatusBarService;
 import com.android.systemui.Flags;
+import com.android.systemui.applocker.AxAppLockerHelper;
 import com.android.systemui.flags.FeatureFlagsClassic;
 import com.android.systemui.plugins.FalsingManager;
 import com.android.systemui.plugins.PluginManager;
@@ -128,6 +129,7 @@ public class ExpandableNotificationRowController implements NotifViewController 
     private final NotificationUiEligibilityChecker mNotificationUiEligibilityChecker;
     private final Optional<AutomationNotificationBackgroundProvider>
             mAutomationNotificationBackgroundProvider;
+    private final AxAppLockerHelper mAxAppLockerHelper;
     private final Context mContext;
 
     @VisibleForTesting
@@ -296,7 +298,8 @@ public class ExpandableNotificationRowController implements NotifViewController 
             NotificationActivityStarter notificationActivityStarter,
             NotificationUiEligibilityChecker notificationUiEligibilityChecker,
             Optional<AutomationNotificationBackgroundProvider>
-                    automationNotificationBackgroundProvider) {
+                    automationNotificationBackgroundProvider,
+            AxAppLockerHelper axAppLockerHelper) {
         mView = view;
         mContext = context;
         mListContainer = listContainer;
@@ -337,6 +340,7 @@ public class ExpandableNotificationRowController implements NotifViewController 
         mNotificationActivityStarter = notificationActivityStarter;
         mNotificationUiEligibilityChecker = notificationUiEligibilityChecker;
         mAutomationNotificationBackgroundProvider = automationNotificationBackgroundProvider;
+        mAxAppLockerHelper = axAppLockerHelper;
     }
 
     String loadsGutsAppName(Context context, PipelineEntry pipelineEntry) {
@@ -402,7 +406,8 @@ public class ExpandableNotificationRowController implements NotifViewController 
                 mBundleInteractionLogger,
                 mNotificationActivityStarter,
                 mNotificationUiEligibilityChecker,
-                mAutomationNotificationBackgroundProvider);
+                mAutomationNotificationBackgroundProvider,
+                mAxAppLockerHelper);
         mView.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
         if (mAllowLongPress) {
             if (mFeatureFlags.isEnabled(
