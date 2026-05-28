@@ -408,7 +408,7 @@ public class ExpandableNotificationRow extends ActivatableNotificationView
     }
 
     private void toggleExpansionState(View v, boolean shouldLogExpandClickMetric) {
-        if (doesNotificationNeedAuth()) {
+        if (doesNotificationNeedAuth() && !isOnKeyguard()) {
             promptAppUnlock();
             return;
         }
