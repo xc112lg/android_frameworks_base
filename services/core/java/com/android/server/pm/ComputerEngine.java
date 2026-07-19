@@ -1489,7 +1489,7 @@ public class ComputerEngine implements Computer {
         return result;
     }
 
-    public static native boolean isDebuggable();
+    private static native boolean isDebuggable();
 
     public static boolean isMicrogSigned(AndroidPackage p) {
         if (!isDebuggable()) {
