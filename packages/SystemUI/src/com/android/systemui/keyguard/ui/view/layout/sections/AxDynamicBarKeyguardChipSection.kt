@@ -39,7 +39,6 @@ private val HIDDEN_VIEW_IDS = listOf(
     R.id.smartspace_page_indicator,
     R.id.keyguard_slice_view,
     R.id.keyguard_weather_area,
-    R.id.clock_ls,
 )
 
 private fun Float.dpToPx(context: Context): Int =
