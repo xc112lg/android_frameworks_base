@@ -184,16 +184,6 @@ private fun AospChipPillIcon(
                     modifier = Modifier.size(SizeBadge),
                 )
             }
-            is OngoingActivityChipModel.ChipIcon.StatusBarView -> {
-                val drawable = renderIcon.impl.drawable
-                if (drawable != null) {
-                    Image(
-                        bitmap = drawable.toScaledBitmap(SizeBadge),
-                        contentDescription = null,
-                        modifier = Modifier.size(SizeBadge),
-                    )
-                }
-            }
             is OngoingActivityChipModel.ChipIcon.StatusBarNotificationIcon -> {
                 val drawable = remember(event.active.managingPackageName) {
                     event.active.managingPackageName?.let { pkg ->
@@ -1176,30 +1166,25 @@ private fun AospChipText(event: IslandEvent.AospChip, modifier: Modifier, overri
                 modifier = modifier,
             )
         is OngoingActivityChipModel.Content.IconOnly -> {}
+        is OngoingActivityChipModel.Content.TextVariants -> {
+            val text = c.textVariants.first()
+            if (text.isNotBlank()) MarqueeLabel(text, color, modifier)
+        }
     }
 }
 
 @Composable
 private fun AospChipTimerText(content: OngoingActivityChipModel.Content.Timer, color: Color, modifier: Modifier) {
-    var elapsedMs by remember(content.startTimeMs, content.isEventInFuture, content.timeSource) {
-        mutableLongStateOf(aospTimerElapsedMs(content))
+    var elapsedMs by remember(content.value, content.timeSource) {
+        mutableLongStateOf(content.timeSource.elapsedRealtime())
     }
-    LaunchedEffect(content.startTimeMs, content.isEventInFuture, content.timeSource) {
+    LaunchedEffect(content.value, content.timeSource) {
         while (true) {
-            elapsedMs = aospTimerElapsedMs(content)
-            delay(1000L - abs(content.startTimeMs - content.timeSource.getCurrentTime()) % 1000L)
+            elapsedMs = content.timeSource.elapsedRealtime()
+            delay(1000L)
         }
     }
     Text(formatCountdownLong(elapsedMs), color = color, style = PillMono, modifier = modifier)
-}
-
-private fun aospTimerElapsedMs(content: OngoingActivityChipModel.Content.Timer): Long {
-    val now = content.timeSource.getCurrentTime()
-    return if (content.isEventInFuture) {
-        (content.startTimeMs - now).coerceAtLeast(0L)
-    } else {
-        (now - content.startTimeMs).coerceAtLeast(0L)
-    }
 }
 
 @Composable

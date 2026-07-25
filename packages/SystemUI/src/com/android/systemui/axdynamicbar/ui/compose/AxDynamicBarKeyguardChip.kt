@@ -833,6 +833,10 @@ private fun AospKeyguardChipText(
             modifier = modifier,
         )
         is OngoingActivityChipModel.Content.IconOnly -> Unit
+        is OngoingActivityChipModel.Content.TextVariants -> {
+            val text = content.textVariants.first()
+            if (text.isNotBlank()) MarqueeText(text, color, modifier)
+        }
     }
 }
 
@@ -842,25 +846,16 @@ private fun AospKeyguardTimerText(
     color: Color,
     modifier: Modifier,
 ) {
-    var elapsedMs by remember(content.startTimeMs, content.isEventInFuture, content.timeSource) {
-        mutableLongStateOf(aospTimerElapsedMs(content))
+    var elapsedMs by remember(content.value, content.timeSource) {
+        mutableLongStateOf(content.timeSource.elapsedRealtime())
     }
-    LaunchedEffect(content.startTimeMs, content.isEventInFuture, content.timeSource) {
+    LaunchedEffect(content.value, content.timeSource) {
         while (true) {
-            elapsedMs = aospTimerElapsedMs(content)
-            delay(1000L - abs(content.startTimeMs - content.timeSource.getCurrentTime()) % 1000L)
+            elapsedMs = content.timeSource.elapsedRealtime()
+            delay(1000L)
         }
     }
     Text(formatCountdownLong(elapsedMs), color = color, style = PillMono, modifier = modifier)
-}
-
-private fun aospTimerElapsedMs(content: OngoingActivityChipModel.Content.Timer): Long {
-    val now = content.timeSource.getCurrentTime()
-    return if (content.isEventInFuture) {
-        (content.startTimeMs - now).coerceAtLeast(0L)
-    } else {
-        (now - content.startTimeMs).coerceAtLeast(0L)
-    }
 }
 
 @Composable

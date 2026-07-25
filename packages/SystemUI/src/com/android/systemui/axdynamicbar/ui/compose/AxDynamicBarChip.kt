@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import android.graphics.drawable.Drawable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.res.stringResource
+import com.android.systemui.animation.Expandable as SystemUiExpandable
 import com.android.systemui.axdynamicbar.model.IslandEvent
 import com.android.systemui.axdynamicbar.shared.AlphaIconBg
 import com.android.systemui.axdynamicbar.shared.AlphaSecondary
@@ -127,7 +128,8 @@ fun AxDynamicBarChip(
                                 change.consume()
                                 val current = state?.event
                                 if (current is IslandEvent.AospChip) {
-                                    if (!viewModel.handleAospChipTap(current, expandableController.expandable)) {
+                                    val expandable = SystemUiExpandable(expandableController.transitionSource)
+                                    if (!viewModel.handleAospChipTap(current, expandable)) {
                                         viewModel.statusBarExpansion.toggle()
                                     }
                                 } else {
